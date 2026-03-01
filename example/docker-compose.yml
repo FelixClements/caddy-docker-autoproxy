@@ -1,0 +1,45 @@
+services:
+  # Target application to be proxied
+  myapp:
+    image: nginx:latest
+    labels:
+      caddy.enable: "true"
+      caddy.host: "example.com"
+      caddy.port: "80"
+    networks:
+      - web
+
+  # Caddy web server
+  caddy:
+    image: caddy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2019:2019"  # Admin API
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+
+  # Auto-proxy service
+  caddy-autoproxy:
+    image: your-repo/caddy-docker-autoproxy:latest
+    environment:
+      - CADDY_URL=http://caddy:2019
+      - POLL_INTERVAL=30s
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - web
+    depends_on:
+      - caddy
+
+networks:
+  web:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
