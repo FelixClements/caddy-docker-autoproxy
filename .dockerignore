@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+caddy-docker-autoproxy
+
+# Test coverage
+*.out
+coverage.txt
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Documentation
+README.md
+LICENSE
+.github/
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Example
+example/
+
+# Development
+*.log
+.env
