@@ -159,3 +159,48 @@ func TestParseContainerLabelsSafe_Disabled(t *testing.T) {
 		t.Error("expected nil config for disabled")
 	}
 }
+
+func TestParseContainerLabels_WithAddress(t *testing.T) {
+	labels := map[string]string{
+		"caddy.enable":  "true",
+		"caddy.host":    "backend.example.com",
+		"caddy.port":    "8080",
+		"caddy.address": "example.com",
+	}
+
+	config, err := ParseContainerLabels(labels)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if config == nil {
+		t.Fatal("expected config, got nil")
+	}
+
+	if config.Address != "example.com" {
+		t.Errorf("expected address 'example.com', got '%s'", config.Address)
+	}
+}
+
+func TestParseContainerLabels_AddressEmpty(t *testing.T) {
+	labels := map[string]string{
+		"caddy.enable":  "true",
+		"caddy.host":    "example.com",
+		"caddy.port":    "8080",
+		"caddy.address": "",
+	}
+
+	config, err := ParseContainerLabels(labels)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if config == nil {
+		t.Fatal("expected config, got nil")
+	}
+
+	// Empty address should be treated as missing
+	if config.Address != "" {
+		t.Errorf("expected empty address, got '%s'", config.Address)
+	}
+}

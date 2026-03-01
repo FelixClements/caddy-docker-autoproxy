@@ -9,9 +9,10 @@ import (
 
 // ContainerConfig represents a container to be proxied
 type ContainerConfig struct {
-	Host string
-	Port int
-	Path string
+	Host    string
+	Port    int
+	Path    string
+	Address string
 }
 
 // BuildReverseProxyConfig builds Caddy JSON config for reverse proxy
@@ -63,14 +64,19 @@ func buildRoute(c labels.CaddyConfig, index int) map[string]interface{} {
 		"upstreams":   []map[string]string{{"dial": fmt.Sprintf("%s:%d", c.Host, c.Port)}},
 	}
 
-	if c.Path != "" {
-		// Use matchers for path-based routing
+	// Build matchers based on Address and Path
+	if c.Address != "" || c.Path != "" {
+		matcher := map[string]interface{}{}
+
+		if c.Address != "" {
+			matcher["host"] = []string{c.Address}
+		}
+		if c.Path != "" {
+			matcher["path"] = []string{c.Path + "/*"}
+		}
+
 		return map[string]interface{}{
-			"match": []map[string]interface{}{
-				{
-					"path": []string{c.Path + "/*"},
-				},
-			},
+			"match":  []map[string]interface{}{matcher},
 			"handle": []interface{}{handle},
 		}
 	}

@@ -4,8 +4,9 @@ services:
     image: nginx:latest
     labels:
       caddy.enable: "true"
-      caddy.host: "example.com"
+      caddy.host: "backend.example.com"
       caddy.port: "80"
+      caddy.address: "192.168.1.10"
     networks:
       - web
 

@@ -7,10 +7,11 @@ import (
 
 // CaddyConfig represents the parsed Caddy configuration from container labels
 type CaddyConfig struct {
-	Enable bool
-	Host   string
-	Port   int
-	Path   string // optional
+	Enable  bool
+	Host    string
+	Port    int
+	Path    string // optional
+	Address string // optional
 }
 
 // ParseContainerLabels parses Docker labels and extracts Caddy configuration
@@ -46,6 +47,11 @@ func ParseContainerLabels(labels map[string]string) (*CaddyConfig, error) {
 	// Parse caddy.path (optional)
 	if path, exists := labels["caddy.path"]; exists {
 		config.Path = path
+	}
+
+	// Parse caddy.address (optional)
+	if address, exists := labels["caddy.address"]; exists && address != "" {
+		config.Address = address
 	}
 
 	return config, nil

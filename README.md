@@ -57,9 +57,10 @@ Add these labels to your Docker containers:
 | Label | Required | Description |
 |-------|----------|-------------|
 | `caddy.enable` | Yes | Set to `true` to enable proxy |
-| `caddy.host` | Yes | Hostname for the route |
-| `caddy.port` | Yes | Port number of the container |
+| `caddy.host` | Yes | Backend upstream host (where to proxy to) |
+| `caddy.port` | Yes | Backend upstream port number |
 | `caddy.path` | No | Path prefix for route (e.g., `/api`) |
+| `caddy.address` | Yes | Public-facing hostname (e.g., `example.com`). Caddy auto-HTTPS handles ports 80/443 |
 
 ### Example
 
@@ -69,8 +70,9 @@ services:
     image: nginx:latest
     labels:
       caddy.enable: "true"
-      caddy.host: "example.com"
+      caddy.host: "backend.example.com"
       caddy.port: "80"
+      caddy.address: "192.168.1.10"
       # Optional: caddy.path: "/app"
 ```
 
@@ -97,8 +99,8 @@ services:
 
 1. Polls Docker for running containers every 30 seconds
 2. Filters containers with `caddy.enable=true` label
-3. Reads `caddy.host`, `caddy.port`, and optional `caddy.path`
-4. Generates Caddy JSON reverse proxy config
+3. Reads `caddy.host`, `caddy.port`, optional `caddy.path`, and `caddy.address`
+4. Generates Caddy JSON reverse proxy config with host-based matchers
 5. Pushes config to Caddy Admin API
 
 ## Architecture
