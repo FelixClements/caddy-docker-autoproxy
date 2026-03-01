@@ -197,9 +197,10 @@ func TestBuildReverseProxyConfig_WithAddress(t *testing.T) {
 	if !ok {
 		t.Error("expected 'host' matcher")
 	}
-	hostList := hosts.([]string)
-	if len(hostList) == 0 || hostList[0] != "example.com" {
-		t.Errorf("expected host 'example.com', got %v", hostList)
+	hostList := hosts.([]interface{})
+	hostStr, ok := hostList[0].(string)
+	if !ok || hostStr != "example.com" {
+		t.Errorf("expected host 'example.com', got %v", hostStr)
 	}
 }
 
@@ -277,9 +278,10 @@ func TestBuildReverseProxyConfig_WithAddressAndPath(t *testing.T) {
 	if !ok {
 		t.Error("expected 'host' matcher")
 	}
-	hostList := hosts.([]string)
-	if hostList[0] != "example.com" {
-		t.Errorf("expected host 'example.com', got %v", hostList)
+	hostList := hosts.([]interface{})
+	hostStr, ok := hostList[0].(string)
+	if !ok || hostStr != "example.com" {
+		t.Errorf("expected host 'example.com', got %v", hostStr)
 	}
 
 	// Check path matcher
@@ -287,8 +289,9 @@ func TestBuildReverseProxyConfig_WithAddressAndPath(t *testing.T) {
 	if !ok {
 		t.Error("expected 'path' matcher")
 	}
-	pathList := paths.([]string)
-	if pathList[0] != "/api/*" {
-		t.Errorf("expected path '/api/*', got %v", pathList)
+	pathList := paths.([]interface{})
+	pathStr, ok := pathList[0].(string)
+	if !ok || pathStr != "/api/*" {
+		t.Errorf("expected path '/api/*', got %v", pathStr)
 	}
 }
